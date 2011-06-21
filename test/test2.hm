@@ -1,6 +1,7 @@
 \begin{page}{atest.html}
   \label{otherfile_test}
   \title{We are in test2.hm}
-
+  \modified{20 Feb 2011}
+  
   How does it feel?
 \end{page}

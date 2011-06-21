@@ -13,6 +13,7 @@
 \begin{page}{test.html}
   \label{test_page}
   \title{This is a test}
+  \modified{25 Feb 2011}
 
   ``Hello everyone,'' he said. [or did he?]
 
@@ -128,6 +129,7 @@
 \begin{page}{test2.html}
   \label{test_page_2}
   \title{This is another test page}
+  \modified{25 Feb 2011}
 
   We see that
   \begin{center}
@@ -144,6 +146,7 @@
 \begin{page}{muffins.html}
   \label{muffins}
   \title{The Great Door}
+  \modified{25 Feb 2011}
 
   A soft red glow nearly filled the darkened room, the fringes of the
   light eaten by the black walls.  Through the frosted window, vague
@@ -274,6 +277,7 @@
 \begin{page}{test3.html}
   \label{subdir_test}
   \title{This page is in a subdirectory}
+  \modified{25 Feb 2011}
 
   And now you know.  Go to the \ref[test page]{test_page}.
 \end{page}

@@ -168,7 +168,7 @@ def end_page_environment(char_env, token_env, outer_token_env, out) :
         if not token_env.has_key("_page_modified") :
             raise Exception("Page "+repr(pagepath)+" must have \\modified token.")
         # breadcrumbs:
-        mybc = [(a[1], a[0], make_reference(token_env, a[1], a[0])) for a in token_env["_breadcrumbs"]]
+        mybc = [(a[1], a[0], make_reference(token_env, a[1], a[0])) for a in token_env.get("_breadcrumbs", [])]
         def _get_name(overridename, label) :
             print "_getname", overridename, label
             if overridename is not None :
