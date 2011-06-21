@@ -1,0 +1,21 @@
+HTM -- The HyperText Macros
+Kyle Miller 2011
+
+1. Introduction
+
+This is different from mht because there is no intermediate macro
+expansion language.  I don't think that was a good idea before.
+
+It's also not scython's sml since it turned out to be too slow to have
+an intermediate scheme to do the macro conversion.  Why was there
+intermediate scheme?  I wanted tail call optimization to be able to
+implement the parser.
+
+It's also not hml because there's too much state to comfortably
+program the first time through.
+
+1.1. So what is this?
+
+It's a bunch of macros which mimic LaTeX syntax which become HTML.
+This is for the purpose of using Emacs great LaTeX mode to produce my
+web site, and to prevent the necessity of using HTML.

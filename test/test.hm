@@ -1,0 +1,281 @@
+\setstylesheet{default.css}
+\setpagetemplate{template.hm}
+
+\def{firstpagethumbnail}{file}{\file[\includegraphics[width=240,page=0,ext=png]{\var{file}}]{\var{file}}}
+
+\def{R}{}{\math{\mathbf{R}}}
+\def{Z}{}{\math{\mathbf{Z}}}
+\def{abs}{v}{\math{|\,\var{v}\,|}}
+\def{pmod}{n}{\math{\ (\mathrm{mod}\ \var{n})}}
+\def{ell}{}{\mathit{l}}
+\def{frac}{num,denom}{\math{(\var{num})/(\var{denom})}}
+
+\begin{page}{test.html}
+  \label{test_page}
+  \title{This is a test}
+
+  ``Hello everyone,'' he said. [or did he?]
+
+  Here is an expression: $-3x^2 -\lambda x+2$
+
+  \begin{center}
+    \begin{tabular}{c||cccccc}
+      $i$ & 1 & 2 & 3 & 4 & 5 & 6 \\
+      \hline
+      $3^i$ & 3 & 2 & 6 & 4 & 5 & 1 \\
+    \end{tabular}
+  \end{center}
+
+  And so \textit{this} is another\\ paragraph, but with a line break.
+
+  A website to see is \link{http://google.com/}, which is also called
+  \link[Google]{http://google.com/}.
+
+  Check out the next page, \ref{test_page_2}.  Or go down a line to \ref{#sec_this-section}
+
+  \begin{itemize}
+  \item Here's an item.
+  \item And here's another.
+  \end{itemize}
+
+  On the other hand, we have the following enumeration:
+  \begin{enumerate}
+  \item Here's the first item;
+  \item But this is probably second.
+  \item Or any element $x\in\Z$.
+  \end{enumerate}
+
+  \section{From a math paper}
+  Let $\omega$ be a primitive root modulo $p$ and let $d$ be a divisor
+  of $\Z_p^*$.  If $x$ is such that $x^d\equiv 1\pmod{p}$, then, since
+  $x\equiv\omega^\ell\pmod{p}$ for some $0\leq\ell<p-1$, we have
+  $\omega^{d\ell}\equiv1\pmod{p}$.  By Euler's theorem, then
+  $d\ell\equiv0\pmod{p-1}$.  Because $d$ divides $p-1$, we have that
+  $\ell$ is divisible by $\frac{p-1}{d}$.  So, $\ell=k\frac{p-1}{d}$
+  for some $0\leq k<d$, since $0\leq\ell<p-1$.  Assume
+  that $\gcd(k,d)\neq1$, and let $d'=\frac{d}{\gcd(k,d)}$, which
+  means $d'<d$.  We see that...
+
+  This isn't from a math paper:
+  \begin{equation*}
+    f(x)=c\cdot x^2+\mathrm{R}
+  \end{equation*}
+  or $f^2(x)=c^2\cdot x^4$.
+
+  And we see that, as $\lim x^2/x=2x$,
+  \begin{equation*}
+    f'(x)=2cx
+  \end{equation*}
+  
+  \section{This is a section}
+  \label{sec_this-section}
+
+  We are in a section.  So go see \ref{muffins#sec_conclusion}.
+
+  Or look at this table:
+  \begin{tabular}{||c|r|l||}
+    1 & \multicolumn{2}{|c}{\textbf{Hi}} \\
+    \hline
+    4 & 5 & 6\\
+  \end{tabular}
+
+  How about another table (from some other source?)
+  \begin{tabular}{|l|l|l|}
+    \hline \multicolumn{3}{|c|}{Team sheet} \\
+    \hline Goalkeeper & GK & Paul Robinson \\ \hline
+    \multirow{4}{*}{Defenders} & LB & Lucus Radebe \\
+    & DC & Michael Duberry \\
+    & DC & Dominic Matteo \\
+    & RB & Didier Domi \\ \hline
+    \multirow{3}{*}{Midfielders} & MC & David Batty \\
+    & MC & Eirik Bakke \\
+    & MC & Jody Morris \\ \hline
+    Forward & FW & Jamie McMaster \\ \hline
+    \multirow{2}{*}{Strikers} & ST & Alan Smith \\
+    & ST & Mark Viduka \\ \hline
+  \end{tabular}
+
+  Or from AoPS, but modified slightly
+  \begin{tabular}{|l|l|cccc|c|}\hline
+    \multicolumn{7}{|c|}{USAMTS Final Scores by Round}\\\hline
+    Medal&Name&\#1&\#2&\#3&\#4&Total\\\hline\hline
+    \multirow{3}{*}{Gold} &Richard Feynman&25&25&25&25&100\\ \hline %\cline{3-7}
+    &Albert Einstein&25&25&25&25&100\\ \hline %\cline{3-7}
+    &Marie Curie&25&24&24&25&98\\\hline
+    Silver&John Nash&20&20&25&24&89\\\hline
+    \multirow{3}{*}{None}&Jane Doe&23&\multicolumn{2}{c}{\textit{None}}&25&48\\ \hline %\cline{3-7}
+    &John Doe&\multicolumn{2}{c}{\textit{None}}&25&20&45\\ \hline %\cline{3-7}
+    &Lazy Person&5&\multicolumn{3}{c|}{\textit{None}}&5\\\hline
+  \end{tabular}
+
+  \subsection{This is a subsection}
+  
+  And this is a subsection.
+
+  \includegraphics[width=200]{images/z80_thumb.jpg}
+
+  \firstpagethumbnail{images/quad_iter_graphs.pdf}
+  
+  \subsubsection{A subsubsection}
+  This is a subsubsection.
+
+  \subsection{This is a subsection, too}
+  
+  As is this.
+\end{page}
+
+
+\begin{page}{test2.html}
+  \label{test_page_2}
+  \title{This is another test page}
+
+  We see that
+  \begin{center}
+    this is \textit{centered} text.
+  \end{center}
+  
+  And that's that.  See also \ref{test_page} or \ref{subdir_test}.
+
+  Maybe you want to see \ref{test_page#sec_this-section}.
+\end{page}
+
+\def{twiddle}{}{\begin{center}-~-\end{center}}
+
+\begin{page}{muffins.html}
+  \label{muffins}
+  \title{The Great Door}
+
+  A soft red glow nearly filled the darkened room, the fringes of the
+  light eaten by the black walls.  Through the frosted window, vague
+  figures flitted across the amorphous expanse.  A voice broke out
+  from the darkness.
+
+  ``Where am I?''
+
+  The voice was shaky and weak, almost like it was being used for the
+  first time.  There was no response.  The disembodied voice again
+  echoed across the seemingly empty expanse.
+
+  ``What is happening?''
+
+  The red glow became brighter.  Then, a wizened growl emanated from
+  within the now-visible metal tin sitting in the middle of the room.
+
+  ``We,'' the new voice said slowly, ``are in an oven.''
+
+  ``An oven?  Why?''
+
+  The room was getting warmer.
+
+  ``I see you have not been shown the ways of our kind.''
+
+  ``And what are we?''
+
+  ``We, my young lad, are muffins.''
+
+  \twiddle
+
+  The younger muffin didn't know what to make of this.  What did being
+  a muffin make him?  Well, surely a muffin, but he wondered what it
+  meant beyond this obvious fact.  How was he going to live?  Where
+  did he come from?  Where was he going to?  He thought of directing
+  some of these questions to the wise old muffin, and from mere
+  thinking went as far as asking, and from asking, got a response from
+  the muffin.
+
+  ``Alas, these are difficult questions that have been contemplated by
+  muffins for ages.  I am afraid I may not be able to answer all of
+  these questions easily.  Many a muffin have tried and failed.''
+
+  ``Is there anything you can tell me?''
+
+  ``Have you ever heard the story of the Baking?  Well, of course not.
+  Let me begin.''
+
+  \twiddle
+
+  In the beginning there was nothing.  The Oven was a formless,
+  shapeless void.  There was not anything inside nor outside the Oven,
+  and it would have stayed that way if it had not been for the Baker
+  who had just opened the great Oven Door.  The Baker had mixed
+  Batter, the seeds of the universe, and he saw it was good.  In the
+  Baker's hand was a tray full of the sacred Batter, and he was
+  planning on creating beings in his image.  He placed the tray within
+  the confines of the oven and again closed the Great Door.
+
+  The Baker began the act of baking and turned on the great orange
+  coils at the edge of the Oven.  The coils gave heat to the Oven, and
+  the Baker saw it was good.  Thus began the known world, with the
+  Baker carefully watching his creations.
+
+  It is said that the Great Door will only be reopened at the ends of
+  time during the Great Recalling when the Baker decides to take all
+  of us back for judgment so that those who spent their lives wisely
+  may at the end of their troubles we rewarded for their effort.
+
+  It is our duty, then, to fulfill our contract with the omnipotent
+  Baker.
+
+  \twiddle
+
+  The young muffin sat in silence in his alcove on the tray.  He could
+  now make out the features of the wise old muffin, with his many
+  raisins embedded in his golden brown top.  Slowly, thoughts began to
+  form in his mind, and then one burst out of him.
+
+  ``How could you know this?  We both have been in the Oven for the
+  same amount of time!''
+
+  The wise old muffin responded accusingly, ``do you dare disbelieve
+  the history of our people?  If you keep this up, I can assure you
+  that you will not be treated favorably during the Great Recalling.''
+
+  Suddenly, a deafening noise reminiscent of a giant bell filled the
+  infinite expanse of the Oven as the orange glow of the coils was
+  extinguished.  The images in the frosted window began to become
+  clearer, and the Great Door swung open.
+
+  The wise old muffin exclaimed in total delight, ``he's here!  We have
+  come to meet our Baker!''
+
+  \twiddle
+
+  Tom looked into his oven, smiling.  The sweet smell of the raisin
+  muffins permeated the entire room, filling his nose with savory
+  goodness.  He took an oven mitt and took them out, letting them cool
+  on the counter top next to the oven.  His tongue watered at the
+  thought of eating and sharing his scrumptious treats.
+
+  ``Hey, everybody!  The muffins are done!'' he yelled, hoping his
+  family would hear him.
+
+  He heard the running footsteps of his children down the stairwell,
+  and they wasted no time to make themselves visible in the kitchen,
+  following the delicious smell.
+
+  Tom removed the muffins from the tin and placed them on a plate.
+  For a second he could have sworn that they were looking hopeful for
+  something, but he brushed that thought aside.
+
+  ``Ok, dig in!  Be careful, they're still a bit hot.''
+
+  Then, he and his family devoured the delectable delights, oblivious
+  to any thought concerning the process of muffin making, forgetting
+  everything but taste of the wonderful muffins that came through the
+  great oven door.
+
+  \section{Conclusion}
+  \label{sec_conclusion}
+
+  You are what you eat.
+\end{page}
+
+\setoutputdir{testdir}
+\begin{page}{test3.html}
+  \label{subdir_test}
+  \title{This page is in a subdirectory}
+
+  And now you know.  Go to the \ref[test page]{test_page}.
+\end{page}
+
+\include{test2.hm}

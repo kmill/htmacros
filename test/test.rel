@@ -1,0 +1,56 @@
+;; RefTeX parse info file
+;; File: /Users/kyle/notes/projects/python/htm/test/test.hm
+;; User: kyle (Kyle Miller)
+
+(set reftex-docstruct-symbol '(
+
+
+(xr nil "\\\\\\\\\\\\")
+
+(index-tags)
+
+(is-multi t)
+
+(bibview-cache)
+
+(master-dir . "/Users/kyle/notes/projects/python/htm/test/")
+
+(label-numbers)
+
+(bof "/Users/kyle/notes/projects/python/htm/test/test.hm")
+
+("test_page" "s" "\\title{This is a test} ``Hello everyone,'' he said. [or did he?] Here is an expression: $-3x^2-\\lamb" "/Users/kyle/notes/projects/python/htm/test/test.hm" nil)
+
+(toc "toc" "    1 From a math paper" "/Users/kyle/notes/projects/python/htm/test/test.hm" nil 2 "1" "\\section{From a math paper}" 1048)
+
+(toc "toc" "    1 From a math paper" "/Users/kyle/notes/projects/python/htm/test/test.hm" nil 2 "1" "\\section{From a math paper}" 1048)
+
+(toc "toc" "    2 This is a section" "/Users/kyle/notes/projects/python/htm/test/test.hm" nil 2 "2" "\\section{This is a section}" 1409)
+
+("sec_this-section" "s" "We are in a section. So go see \\ref{muffins#sec_conclusion}. Or look at this table: \\begin{tabular}{" "/Users/kyle/notes/projects/python/htm/test/test.hm" nil)
+
+(toc "toc" "      2.1 This is a subsection" "/Users/kyle/notes/projects/python/htm/test/test.hm" nil 3 "2.1" "\\subsection{This is a subsection}" 2932)
+
+(toc "toc" "        2.1.1 A subsubsection" "/Users/kyle/notes/projects/python/htm/test/test.hm" nil 4 "2.1.1" "\\subsubsection{A subsubsection}" 3107)
+
+(toc "toc" "      2.2 This is a subsection, too" "/Users/kyle/notes/projects/python/htm/test/test.hm" nil 3 "2.2" "\\subsection{This is a subsection, too}" 3169)
+
+("test_page_2" "s" "\\title{This is another test page} We see that \\begin{center} this is \\textit{centered} text. " "/Users/kyle/notes/projects/python/htm/test/test.hm" nil)
+
+("muffins" "s" "\\title{The Great Door} A soft red glow nearly filled the darkened room, the fringes of the light eat" "/Users/kyle/notes/projects/python/htm/test/test.hm" nil)
+
+(toc "toc" "    3 Conclusion" "/Users/kyle/notes/projects/python/htm/test/test.hm" nil 2 "3" "\\section{Conclusion}" 8415)
+
+("sec_conclusion" "s" "You are what you eat. " "/Users/kyle/notes/projects/python/htm/test/test.hm" nil)
+
+("subdir_test" "s" "\\title{This page is in a subdirectory} And now you know. Go to the \\ref[test page]{test_page}. " "/Users/kyle/notes/projects/python/htm/test/test.hm" nil)
+
+(bof "/Users/kyle/notes/projects/python/htm/test/test2.hm")
+
+("otherfile_test" "s" "\\title{We are in test2.hm} How does it feel? " "/Users/kyle/notes/projects/python/htm/test/test2.hm" nil)
+
+(eof "/Users/kyle/notes/projects/python/htm/test/test2.hm")
+
+(eof "/Users/kyle/notes/projects/python/htm/test/test.hm")
+))
+
