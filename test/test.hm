@@ -30,7 +30,8 @@
   And so \textit{this} is another\\ paragraph, but with a line break.
 
   A website to see is \link{http://google.com/}, which is also called
-  \link[Google]{http://google.com/}.
+  \link[Google]{http://google.com/}.  This last link was done by
+  \verb|\link[Google]{http://google.com/}|.
 
   Check out the next page, \ref{test_page_2}.  Or go down a line to \ref{#sec_this-section}
 
@@ -45,6 +46,32 @@
   \item But this is probably second.
   \item Or any element $x\in\Z$.
   \end{enumerate}
+
+  \section{Test of verbatim text}
+
+  We may put heads of \verb|\end{verbatim}| in our verbatim
+  environment:
+
+\begin{verbatim}
+And we can type \end or \end{ver} or \end{verbat} but
+not the following, else the environment will end:
+\end{verbatim}
+
+  The following text should be literal:
+\begin{verbatim}
+\section{From a math paper}
+Let $\omega$ be a primitive root modulo $p$ and let $d$ be a divisor
+of $\Z_p^*$.  If $x$ is such that $x^d\equiv 1\pmod{p}$, then, since
+$x\equiv\omega^\ell\pmod{p}$ for some $0\leq\ell<p-1$, we have
+$\omega^{d\ell}\equiv1\pmod{p}$.  By Euler's theorem, then
+$d\ell\equiv0\pmod{p-1}$.  Because $d$ divides $p-1$, we have that
+$\ell$ is divisible by $\frac{p-1}{d}$.  So, $\ell=k\frac{p-1}{d}$
+for some $0\leq k<d$, since $0\leq\ell<p-1$.  Assume
+that $\gcd(k,d)\neq1$, and let $d'=\frac{d}{\gcd(k,d)}$, which
+means $d'<d$.  We see that...
+\end{verbatim}
+
+  And it renders as:
 
   \section{From a math paper}
   Let $\omega$ be a primitive root modulo $p$ and let $d$ be a divisor

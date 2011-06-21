@@ -2,9 +2,9 @@
 #
 # for handling plain text and its fonts, formatting, etc.
 
-from lazytokens import (StringToken, LambdaToken, ListToken, VariableToken, SelfEvaluatingToken)
+from lazytokens import (StringToken, LambdaToken, ListToken, VariableToken, SelfEvaluatingToken, EndEnvToken)
 from lazytokens import (ParagraphToken, InhibitParagraphToken, ItemToken, LineBreakToken, ColumnBreakToken, HorizontalLineToken)
-from environments import (CharacterEnvironment, add_char_handler, add_token_handler)
+from environments import (DefaultCharacterEnvironment, CharacterEnvironment, add_char_handler, add_token_handler)
 from parser import (make_handler, global_char_env, parse_one, parse_all, read_bracket_args)
 from references import (add_counter, get_counter, set_page_reference, set_anchor_reference, make_reference)
 from references import (generate_id, get_anchor_by_id, counters_to_string, get_autoname_by_ref_name)
@@ -611,6 +611,59 @@ def caption_handler(stream, char_env, escape_env, begin_stack) :
 @make_handler(1)
 def framebox_handler(text) :
     return StringToken("<SPAN CLASS=\"framebox\">") + text + StringToken("</SPAN>")
+
+###
+### Verbatim text
+###
+
+# handles "\verb|oeuoeau|"
+@add_token_handler(token_handlers, "verb")
+def verb_handler(stream, char_env, escape_env, begin_stack) :
+    delim = stream.read()
+    out = []
+    c = stream.read()
+    while c != delim :
+        out.append(c)
+        c = stream.read()
+    return StringToken("<tt>"+"".join(out)+"</tt>")
+
+#
+# Verbatim environment:
+#
+
+def verbatim_passthrough_handler(stream, char_env, escape_env, begin_stack) :
+    return StringToken(stream.read())
+
+def verbatim_end_handler(stream, char_env, escape_env, begin_stack) :
+    end_verbatim_text = "\\end{verbatim}"
+    i = 0
+    c = stream.peek()
+    while c == end_verbatim_text[i] :
+        stream.read()
+        if c == "" :
+            raise stream.failure("End of stream reached before end of verbatim environment.")
+        i += 1
+        if i == len(end_verbatim_text) :
+            return EndEnvToken("verbatim")
+        c = stream.peek()
+    return StringToken(end_verbatim_text[:i])
+
+def begin_verbatim_environment(stream, char_env, escape_env) :
+    new_base_env = DefaultCharacterEnvironment(verbatim_passthrough_handler)
+    new_env = CharacterEnvironment({"\\" : verbatim_end_handler}, new_base_env)
+    return (new_env, escape_env)
+def end_verbatim_environment(char_env, escape_env, outer_token_env, out) :
+    if type(out) is not StringToken :
+        raise Exception("Something bad happened with the verbatim environment.")
+    html_escape_table = {
+        "&": "&amp;",
+        ">": "&gt;",
+        "<": "&lt;",
+        }
+    def html_escape(text):
+        return "".join(html_escape_table.get(c,c) for c in text)
+    return StringToken("<pre>"+html_escape(out.s.split("\n", 1)[1])+"</pre>")
+environment_handlers["verbatim"] = (begin_verbatim_environment, end_verbatim_environment)
 
 ###
 ### Templates and stylesheets

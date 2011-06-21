@@ -1,0 +1,3 @@
+#!/bin/bash
+
+python runhm.py test/test.hm out
