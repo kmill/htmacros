@@ -7,6 +7,7 @@ from environments import (add_char_handler, add_token_handler)
 from parser import (parse_one, read_bracket_args, global_char_env)
 import pickle
 import os.path
+import urllib
 
 # any module with macros needs to have these variables
 char_handlers = dict()
@@ -73,9 +74,11 @@ class LinkReference(object) :
         self.anchor = anchor
     def relative_link(self, fromdir, insides) :
         path = os.path.join(os.path.relpath(self.dir, fromdir), self.filename)
-        return StringToken("<A HREF=\"" + path + ("" if self.anchor is None else ("#"+self.anchor))+"\">") + insides + StringToken("</A>")
+        return StringToken("<A HREF=\"" + path + ("" if self.anchor is None
+                                                  else ("#"+urllib.quote_plus(self.anchor)))
+                           +"\">") + insides + StringToken("</A>")
     def make_anchor(self) :
-        return StringToken("<A NAME=\"" + self.anchor + "\"></A>")
+        return StringToken("<A NAME=\"" + urllib.quote_plus(self.anchor) + "\"></A>")
     def get_name(self) :
         if self.anchor is None :
             return self.labelname
