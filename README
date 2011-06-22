@@ -13,6 +13,9 @@ http://web.mit.edu/kmill/www/
 
 2. How do I use it?
 
-Please examine the documentation in the doc directory.  The
-documentation may be built by running doc/makedoc, and the result is
-placed in doc/doc_html.
+Please examine the documentation, which is at both:
+
+* http://web.mit.edu/kmill/www/htmacros_doc.html
+
+* and in the doc directory.  The documentation may be built by running
+  doc/makedoc, and the result is placed in doc/doc_html.
