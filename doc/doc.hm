@@ -1,0 +1,254 @@
+% This is the main documentation of the htmacros package.
+
+\setpagetemplate{doc_page_template.hm}
+
+\begin{page}{index.html}
+  \label{doc_index}
+  \title{htmacros}
+  \modified{21 June 2011}
+
+  The htmacros package is a macro-based system for the production of
+  HTML.  The author does not like writing pure HTML, but does enjoy
+  writing LaTeX with the AUCTeX package, and wanted a system which
+  provided some extra features for building websites (where LaTeX is
+  only for single documents).  This package lets the user write in a
+  LaTeX-like syntax to structure and compose websites.
+
+  \section{Reference}
+  \label{sec:reference}
+
+  This section gives an overview of all of the macros in the language.
+
+  \subsection{Basic execution}
+  \label{sec:basic-execution}
+
+  The execution model of the system is that the source text is read in
+  character-by-character, and functions are executed depending on what
+  the character is.  The result of the function is then added to the
+  current output stream (which are \texttt{LazyToken}s).  Thus, a
+  function can begin parsing itself and get the result for further
+  processing.
+
+  There are two environments: the character environment and the escape
+  environment.  Environments may nest like in Scheme.  The character
+  environment contains the handler mapping for each character, and the
+  escape environment contains the handler for each executable token.
+  These are not to be confused with text environments, although it may
+  be the case that text environments extend these environments.
+
+  The evaluation of a handler may be delayed by way of
+  \texttt{LambdaToken}s.  That is, the result of parsing must at some
+  point be evaluated.  This allows one to define macros which use the
+  value of a variable at some point in the future.  The evaluation of
+  a handler also involves evaluation variables which may be acquired
+  by \verb|\var| for the purposes of making a templating language.
+
+  The following section describes these handlers.
+
+  \subsection{Character handlers}
+  \label{sec:character-handlers}
+
+  The default handler for characters just returns itself as a
+  \texttt{StringToken}.
+
+  The following is a list of basic character handlers in
+  \texttt{parser.py}:
+
+  \begin{itemize}
+  \item End of file.  Returns \texttt{EOFToken} to end parsing.
+  \item \verb|%|. Marks the beginning of a comment, and everything up
+    to a newline or the end of the file is ignored.
+  \item \verb|\|. Marks the beginning of an executable token.  See
+    \ref{#sec:token-handlers} for more information.
+  \item \verb|{| and \verb|}|. When the parser comes across a
+    \verb|{|, it tries to find a matching closing brace, and the
+      contents are returned.  This is how arguments to executable
+      tokens are handled.
+  \item \verb|[| and \verb|]|. For handling optional arguments.  The
+    resulting \texttt{LazyToken} is \texttt{ArgumentToken}.
+  \end{itemize}
+
+  The following is a list of character handlers from
+  \texttt{textmarkup.py}:
+
+  \begin{itemize}
+  \item \verb|`| and \verb|'|.  These render as curly single quotes.
+  \item \verb|``| and \verb|''|.  These render as curly double quotes.
+  \item Newlines.  Paragraphing like in an e-mail, such as
+\begin{verbatim}
+This is the first paragraph.
+
+This is the second paragraph.
+\end{verbatim}
+    is handled by replacing any sequence of any number of spaces along
+    with at least two newlines by a \texttt{ParagraphToken}.
+  \item \verb|-|, \verb|--|, and \verb|---|.  These are replaced by a
+    hyphen (-), an en-dash (--), and an em-dash (---), respectively.
+  \item \verb|&|.  Represents a column break inside a \texttt{tabular}
+    environment, otherwise it's an error.  See \verb|\&| for actually
+    rendering an ampersand.
+  \end{itemize}
+
+  \subsection{Token handlers}
+  \label{sec:token-handlers}
+
+  To enter a token, it must be escaped with a backslash (a
+  ``\verb|\|'').  For instance, \verb|\textit| is a token for
+  beginning italicized text.
+
+  By default, the name of a token must be composed of alphabetical
+  characters (namely \texttt{A-Z} and \texttt{a-z}).
+
+  The following is a list of basic token handlers in
+  \texttt{parser.py}:
+
+  \begin{description}
+  \item[\verb|\var{varname}|] Gets the value of variable
+    \texttt{varname} in the evaluation dictionary.  This token is
+    often used in a page template (for instance,
+    \verb|<H1>\var{pagetitle}</H1>|).  Evaluation is delayed.
+  \item[\verb|\def{macroname}{arg1,arg2,...}{replacement}|] Defines a
+    macro called \texttt{macroname} with some number of arguments.
+    Evaluation of the definition is delayed (that is, the definition
+    does not enter the current escape environment until it is
+    evaluated).  When the macro is evaluated, the \texttt{replacement}
+    is given arguments as evaluation variables.  The result of calling
+    the macro is also delayed.  User-defined macros can't have
+    optional arguments at the moment.
+  \item[\verb|\begin{envname}...\end{envname}|] Enters a text
+    environment called \texttt{envname}.  An environment is like a
+    macro which takes a long textual argument, but has the benefit of
+    not requiring one to carefully make sure all braces are matched.
+    See \ref{#sec:text-environments}.
+  \item[\verb|\#|] Just expands to \#.  (I have no idea why this is
+    here.)
+  \item[\verb|\setoutputdir{dirname}|] Changes which directory,
+    relative to the global output directory, the output files should
+    be placed.
+  \item[\verb|\include{filename}|] Loads a file with respect to
+    \texttt{_global_input_dir}, while also saving the variables in the
+    list \texttt{_fluid_let}.
+  \item[\verb|\&|] Renders a plain ampersand.
+  \end{description}
+
+  The following is a list of token handlers from
+  \texttt{textmarkup.py}:
+
+  \begin{description}
+  \item[\verb|\textit{text}|] Sets the font face to italic for
+    \texttt{text}.
+  \item[\verb|\textbf{text}|] Sets the font face to bold for
+    \texttt{text}.
+  \item[\verb|\texttt{text}|] Switches the font to typewriter text for
+    \texttt{text}.
+  \item[\verb|\\|] Renders as a line break.  Inside a table, begins a
+    new row.
+  \item[\verb|\hline|] Renders as a horizontal rule.  Inside a table,
+    adds a border between rows.
+  \item[\verb|\`{a}|] Puts a grave accent on \texttt{a}. Example: \`{a}.
+  \item[\verb|\'{a}|] Puts an acute accent on \texttt{a}. Example: \'{a}.
+  \item[\verb|\^{a}|] Puts a circumflex on \texttt{a}. Example: \^{a}.
+  \item[\verb|\"{a}|] Puts an umlaut on \texttt{a}. Example: \"{a}.
+  \item[\verb|\~{a}|] Puts a tilde on \texttt{a}. Example: \~{a}.
+  \item[\verb|\r{a}|] Puts a ring accent on \texttt{a}. Example: \r{a}.
+  \item[\verb|\c{c}|] Puts a cedilla on \texttt{c}. Example: \c{c}.
+  \item[\verb|\copyright|] Renders as \copyright.
+  \item[\verb|\title{text}|] Sets the title of the current page to
+    \texttt{text}.
+  \item[\verb|\item[caption]|] An error unless inside a list
+    environment such as \texttt{itemize}, \texttt{enumerate}, or
+    \texttt{description}.  Inside these environments, \verb|\item|
+    represents the beginning of a list item. The caption (which is
+    optional) makes most sense in the \texttt{description}
+    environment, where it is the term before the indented description.
+    Otherwise, the caption is boldened.
+  \item[\verb|\multicolumn{numcols}{formatting}|] Lets a column span
+    multiple rows. The formatting string is the same as in the
+    \texttt{tabular} environment, but must only describe a single
+    column.
+  \item[\verb|\multirow{numrows}{width}|] Lets a row span multiple
+    rows The width is ignored.  It's present for LaTeX-compatibility.  
+  \end{description}
+
+  \subsection{Text environments}
+  \label{sec:text-environments}
+
+  Text environments (brought about by an incantation such as
+  \verb|\begin{env}...\end{env}|) can change the current character and
+  escape environments, and then process the result of the \verb|...|.
+
+  Text environments from \texttt{textmarkup.py}:
+
+  \begin{description}
+  \item[\verb|\begin{page}{filename}...\end{page}|] This environment
+    takes the result of \texttt{...} and writes it to
+    \texttt{filename}, with respect to \texttt{_curr_out_dir}.  This
+    will create the output directory if it doesn't already exist.  The
+    environment also ensures that two pages do not have the same
+    filename.  The page environment also sets up the following
+    evaluation variables which are fed into the template in
+    \texttt{_page_template}:
+    \begin{description}
+    \item[\texttt{pagetitle}] Text defined by \verb|\title|.
+    \item[\texttt{pagecontent}] The result of evaluating \texttt{...}.
+    \item[\texttt{css}] A string which includes necessary stylesheet
+      data.
+    \item[\texttt{pagemodified}] Text defined by the \verb|\modified|
+      token.
+    \item[\texttt{breadcrumbs}] Text which contains the breadcrumb
+      links.
+    \end{description}
+
+    The page requires a title (defined by \verb|\title|) and text
+    describing when it was modified (defined by \verb|\modified|).
+
+    The page environment declares itself as the next object for being
+    labeled with the title text as its text.
+  \item[\verb|\begin{itemize}...\end{itemize}|] Creates an unordered
+    list whose elements are marked by \verb|\item|.
+  \item[\verb|\begin{enumerate}...\end{enumerate}|] Creates an ordered
+    list whose elements are marked by \verb|\item|.
+  \item[\verb|\begin{description}...\end{description}|] Creates a
+    dictionary list whose elements are marked by
+    \verb|\item[caption]|, where \texttt{caption} is the term for each
+    list element.
+  \item[\verb|\begin{tabular}{formatting}...\end{tabular}|] Renders a
+    table, where \verb|&| represents column breaks and \verb|\\|
+    represents row breaks.  The formatting string is some string of
+    \texttt{lcr|}, where \texttt{l}, \texttt{c}, and \texttt{r} align
+    a column left, center, and right, respectively, and \texttt{|}
+    inserts a border between columns.  A double border can be inserted
+    using \texttt{||}.  Table cells can be modified using
+    \verb|\multirow| and \verb|\multicolumn|.  Borders between rows
+    can be inserted using \verb|\hline|.
+  \end{description}
+
+  \subsection{Variables}
+  \label{sec:variables}
+
+  \begin{description}
+  \item[\texttt{_global_base_out_dir}] The base output directory.
+    This is set by the command line.
+  \item[\texttt{_curr_out_dir}] This is the current output directory.
+    This can be set by \verb|\setoutputdir|.
+  \item[\texttt{_global_input_dir}] This is the current directory
+    relative to which input files are referenced.  This can be
+    modified by \verb|\include|.
+  \item[\texttt{_fluid_let}] This is a list of variables which should
+    be saved while including another file.  By default, the list
+    consists of \texttt{_global_input_dir} and \texttt{_curr_out_dir}.
+  \item[\texttt{_curr_pageid}] This is the id of the current page for
+    handling references.
+  \item[\texttt{_page_template}] This is a template which the
+    \texttt{page} environment uses to construct the output file.
+  \item[\texttt{_page_title}] The title of the current page.
+  \item[\texttt{_page_modified}] This is text set by
+    \verb|\modified{text}|.
+  \item[\texttt{_curr_page_reference}] This is the reference object
+    for the current page (see \texttt{references.py}).
+  \item[\texttt{_table_formatting}] Contains the formatting string for
+    the current \texttt{tabular} environment.
+  \end{description}
+
+  
+\end{page}

@@ -312,7 +312,7 @@ def setoutputdirhandler(stream, char_env, token_env, begin_stack) :
 def set_input_dir(dir) :
     global_tokens["_global_input_dir"] = os.path.abspath(dir)
 
-global_tokens["_fluid_let"] = []
+global_tokens["_fluid_let"] = ["_global_input_dir", "_curr_out_dir"]
 
 @global_token("include")
 def include_handler(stream, char_env, token_env, begin_stack) :
@@ -329,12 +329,8 @@ def include_handler(stream, char_env, token_env, begin_stack) :
                 for name in token_env["_fluid_let"] :
                     fluid_letted[name] = token_env[name]
 #                print "fluid",fluid_letted
-                oldinpdir = token_env["_global_input_dir"]
-                oldoutdir = token_env["_curr_out_dir"]
                 token_env["_global_input_dir"] = os.path.split(filename)[0]
                 ret = global_parse(streams.fileStream(filename))
-                token_env["_curr_out_dir"] = oldoutdir
-                token_env["_global_input_dir"] = oldinpdir
                 for key,value in fluid_letted.iteritems() :
                     token_env[key] = value
                 return ret

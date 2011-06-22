@@ -616,6 +616,15 @@ def framebox_handler(text) :
 ### Verbatim text
 ###
 
+_html_escape_table = {
+    "&": "&amp;",
+    ">": "&gt;",
+    "<": "&lt;",
+    }
+def html_escape(text):
+    return "".join(_html_escape_table.get(c,c) for c in text)
+
+
 # handles "\verb|oeuoeau|"
 @add_token_handler(token_handlers, "verb")
 def verb_handler(stream, char_env, escape_env, begin_stack) :
@@ -625,7 +634,7 @@ def verb_handler(stream, char_env, escape_env, begin_stack) :
     while c != delim :
         out.append(c)
         c = stream.read()
-    return StringToken("<tt>"+"".join(out)+"</tt>")
+    return StringToken("<tt>"+html_escape("".join(out))+"</tt>")
 
 #
 # Verbatim environment:
@@ -655,13 +664,6 @@ def begin_verbatim_environment(stream, char_env, escape_env) :
 def end_verbatim_environment(char_env, escape_env, outer_token_env, out) :
     if type(out) is not StringToken :
         raise Exception("Something bad happened with the verbatim environment.")
-    html_escape_table = {
-        "&": "&amp;",
-        ">": "&gt;",
-        "<": "&lt;",
-        }
-    def html_escape(text):
-        return "".join(html_escape_table.get(c,c) for c in text)
     return StringToken("<pre>"+html_escape(out.s.split("\n", 1)[1])+"</pre>")
 environment_handlers["verbatim"] = (begin_verbatim_environment, end_verbatim_environment)
 
