@@ -4,7 +4,7 @@
 # for more information on handling html math stuff see
 # http://www.cs.tut.fi/~jkorpela/math/
 
-from lazytokens import (StringToken, LambdaToken, ListToken, VariableToken, SelfEvaluatingToken, Token, InhibitParagraphToken, ColumnBreakToken, LineBreakToken)
+from lazytokens import (StringToken, LambdaToken, ListToken, VariableToken, SelfEvaluatingToken, Token, ParagraphToken, InhibitParagraphToken, ColumnBreakToken, LineBreakToken)
 from parser import (make_handler, global_char_env, parse_one, parse_all, read_bracket_args, open_brace_handler)
 from environments import (CharacterEnvironment, add_char_handler, add_token_handler)
 import string
@@ -154,7 +154,9 @@ def escape_dollar_handler(stream, char_env, escape_env, begin_stack) :
 def begin_equation_s_environment(stream, char_env, token_env) :
     return (math_char_env, token_env)
 def end_equation_s_environment(char_env, escape_env, outer_token_env, out) :
-    return InhibitParagraphToken()+StringToken("<CENTER>") + make_render_math(out) + StringToken("</CENTER>\n")
+    return ParagraphToken() + InhibitParagraphToken() + (StringToken("<CENTER>") + make_render_math(out) + StringToken("</CENTER>\n")) + ParagraphToken()
+# the following forgets to create a paragraph break after the math
+#    return InhibitParagraphToken()+StringToken("<CENTER>") + make_render_math(out) + StringToken("</CENTER>\n")
 environment_handlers["equation*"] = (begin_equation_s_environment, end_equation_s_environment)
 
 
@@ -222,6 +224,19 @@ def end_pmatrix_environment(char_env, escape_env, outer_token_env, out) :
     t.close = MathCloseToken(None, ')')
     return t
 environment_handlers["pmatrix"] = (begin_pmatrix_environment, end_pmatrix_environment)
+
+###
+### Fractions
+###
+
+@add_token_handler(token_handlers, "frac")
+def math_frac_handler(stream, char_env, token_env, begin_stack) :
+    num = parse_one(stream, char_env, token_env, begin_stack)
+    denom = parse_one(stream, char_env, token_env, begin_stack)
+    table = StringToken('<TABLE CLASS="mathfrac"><TR CLASS="mathfracnum"><TD>')
+    table += num + StringToken("</TD></TR><TR><TD>") + denom + StringToken("</TD></TR></TABLE>")
+    return MathPassThroughToken(table)
+
 
 # main renderer
 
@@ -581,6 +596,17 @@ _math_open_tokens = dict({'{': '{',
 make_type4_token(_math_open_tokens)
 
 
+# hacks!!!
+@add_token_handler(token_handlers, "left")
+def math_left_handler(stream, char_handlers, escape_env, begin_stack) :
+    return _make_mathopen_handler("<span class=\"mathleftdelim\">" + stream.read() + "</span>")(stream, char_handlers, escape_env, begin_stack)
+
+@add_token_handler(token_handlers, "bigleft")
+def math_left_handler(stream, char_handlers, escape_env, begin_stack) :
+    return _make_mathopen_handler("<span class=\"mathbigleftdelim\">" + stream.read() + "</span>")(stream, char_handlers, escape_env, begin_stack)
+
+
+
 ###
 ### Type 5 symbols (right/closing delimiters)
 ###
@@ -608,6 +634,24 @@ make_type5_symbol(_math_close_symbols)
 _math_close_tokens = dict({'}': '}',
                            })
 make_type5_token(_math_close_tokens)
+
+# hacks!!!
+@add_token_handler(token_handlers, "right")
+def math_right_handler(stream, char_handlers, escape_env, begin_stack) :
+    d = stream.read()
+    if d == "." :
+        d = ""
+    else :
+        d = "<span class=\"mathrightdelim\">" + d + "</span>"
+    return MathCloseToken(stream, d)
+@add_token_handler(token_handlers, "bigright")
+def math_right_handler(stream, char_handlers, escape_env, begin_stack) :
+    d = stream.read()
+    if d == "." :
+        d = ""
+    else :
+        d = "<span class=\"mathbigrightdelim\">" + d + "</span>"
+    return MathCloseToken(stream, d)
 
 
 ###

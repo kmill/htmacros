@@ -160,6 +160,8 @@ This is the second paragraph.
     \texttt{text}.
   \item[\verb|\texttt{text}|] Switches the font to typewriter text for
     \texttt{text}.
+  \item[\verb|\emph{text}|] Like \verb|\textit| but switches back and
+    forth between italic and nonitalic text when nested.
   \item[\verb|\\|] Renders as a line break.  Inside a table, begins a
     new row.
   \item[\verb|\hline|] Renders as a horizontal rule.  Inside a table,
@@ -172,8 +174,11 @@ This is the second paragraph.
   \item[\verb|\r{a}|] Puts a ring accent on \texttt{a}. Example: \r{a}.
   \item[\verb|\c{c}|] Puts a cedilla on \texttt{c}. Example: \c{c}.
   \item[\verb|\copyright|] Renders as \copyright.
+  \item[\verb|\char{code}|] Lets one write something like
+    \verb|\char{trade}| for \char{trade}.
   \item[\verb|\title{text}|] Sets the title of the current page to
     \texttt{text}.
+  \item[\verb|\footnote{text}|] Adds a footnote to the current page.
   \item[\verb|\item[caption]|] An error unless inside a list
     environment such as \texttt{itemize}, \texttt{enumerate}, or
     \texttt{description}.  Inside these environments, \verb|\item|
@@ -379,6 +384,8 @@ This is the second paragraph.
   \item[\texttt{_page_title}] The title of the current page.
   \item[\texttt{_page_modified}] This is text set by
     \verb|\modified|.
+  \item[\texttt{_page_footnotes}] This is a list of footnotes to be
+    rendered at the end of the current page.
   \item[\texttt{_curr_page_reference}] This is the reference object
     for the current page (see \texttt{references.py}).
   \item[\texttt{_table_formatting}] Contains the formatting string for

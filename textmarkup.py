@@ -6,7 +6,7 @@ from lazytokens import (StringToken, LambdaToken, ListToken, VariableToken, Self
 from lazytokens import (ParagraphToken, InhibitParagraphToken, ItemToken, LineBreakToken, ColumnBreakToken, HorizontalLineToken)
 from environments import (DefaultCharacterEnvironment, CharacterEnvironment, add_char_handler, add_token_handler)
 from parser import (make_handler, global_char_env, parse_one, parse_all, read_bracket_args)
-from references import (add_counter, get_counter, set_page_reference, set_anchor_reference, make_reference)
+from references import (add_counter, get_counter, set_page_reference, set_anchor_reference, make_reference, make_label)
 from references import (generate_id, get_anchor_by_id, counters_to_string, get_autoname_by_ref_name)
 from streams import fileStream
 import shutil
@@ -31,6 +31,17 @@ def html_handler(tokenname, html) :
 textit = html_handler("textit", "I")
 textbf = html_handler("textbf", "B")
 texttt = html_handler("texttt", "TT")
+
+@add_token_handler(token_handlers, "emph")
+def emph_handler(stream, char_env, token_env, begin_stack) :
+    emphed = parse_one(stream, char_env, token_env, begin_stack)    
+    def _handler(env) :
+        in_emph = env.get("_in_emph", False)
+        env["_in_emph"] = not in_emph
+        return StringToken("<EM>") \
+            + emphed.eval(env) \
+            + StringToken("</EM>")
+    return LambdaToken(_handler)
 
 ###
 ### Breaks
@@ -74,6 +85,12 @@ def make_spec_char_handler(token, html_entity) :
     return add_token_handler(token_handlers, token)(make_handler(0)(_handler))
 
 make_spec_char_handler('copyright', '&copy;')
+make_spec_char_handler('nbsp', '&nbsp;')
+
+@add_token_handler(token_handlers, "char")
+@make_handler(1)
+def char_handler(inside) :
+    return StringToken("&")+inside+StringToken(";")
 
 ###
 ### Text prettification
@@ -142,12 +159,37 @@ def begin_page_environment(stream, char_env, escape_env) :
     get_counter("page").increment()
     pageid = generate_id("page", get_counter("page"))
     escape_env["_curr_pageid"] = pageid
+    add_counter("footnote")
 
     set_page_reference(escape_env, pageid, file.s)
-    return (char_pretty_text, escape_env.extend())
+    return (char_pretty_text,
+            escape_env.extend({"_page_footnotes" : []}))
 def end_page_environment(char_env, token_env, outer_token_env, out) :
+    def eval_footnotes(footnotes) :
+        oldlenfoot = 0
+        lenfoot = 0
+        fout = StringToken("")
+        while len(footnotes) > lenfoot :
+            oldlenfoot = lenfoot
+            lenfoot = len(footnotes)
+            out = StringToken("")
+            for (num, (id, footnote)) in zip(xrange(oldlenfoot+1,lenfoot+1), footnotes[oldlenfoot:lenfoot]) :
+                make_label(token_env, id, id, StringToken("[%d]" % num))
+                
+                out += HorizontalLineToken() + InhibitParagraphToken() + get_anchor_by_id(id) \
+                    + InhibitParagraphToken() \
+                    + StringToken("<div class=\"footnote\">\n<sup>") \
+                    + make_reference(token_env, StringToken("#ref_" + id), StringToken("[%d]" % num)) \
+                    + StringToken("</sup> ") \
+                    + footnote \
+                    + StringToken("</div>\n")
+            fout += out.eval({})
+        return fout
     if token_env.has_key("_page_template") :
-        rout = render_paragraphing(InhibitParagraphToken()+out.eval({}))
+        out2 = out.eval({})
+        if token_env["_page_footnotes"] :
+            out2 += eval_footnotes(token_env["_page_footnotes"])
+        rout = render_paragraphing(InhibitParagraphToken()+out2)
         if False : # set to True to debug render_paragraphing
             print "out =",out
             print
@@ -234,6 +276,21 @@ def modified_handler(stream, char_env, token_env, begin_stack) :
     def _handler(env) :
         token_env["_page_modified"] = modified
         return StringToken("")
+    return LambdaToken(_handler)
+
+@add_token_handler(token_handlers, "footnote")
+def footnote_handler(stream, char_env, token_env, begin_stack) :
+    footnote = parse_one(stream, char_env, token_env, begin_stack)
+    def _handler(env) :
+        if not token_env.has_key("_page_footnotes") :
+            raise stream.failure("Footnotes can only appear within a page")
+        get_counter("footnote").increment()
+        id = generate_id("footnote", get_counter("page"), get_counter("footnote"))
+        make_label(token_env, "ref_"+id, "ref_"+id, "^")
+        token_env["_page_footnotes"].append((id, footnote))
+        return get_anchor_by_id("ref_"+id) + StringToken("<sup>") \
+            + make_reference(token_env, StringToken("#" + id), None) \
+            + StringToken("</sup>")
     return LambdaToken(_handler)
 
 # takes a (list) token and handles ParagraphToken, InhibitParagraphToken, and LineBreakToken
@@ -464,6 +521,7 @@ def end_tabular_environment(char_env, token_env, outer_token_env, out) :
                         if key == "border-bottom-style" or key == "border-bottom-width" :
                             style[key] = value
                     spanstring += "ROWSPAN="+str(rowspan) + " "
+                    style["vertical-align"] = "middle"
                 if colspan > 1 :
                     for i in range(1,colspan) :
                         if len(ignore) > r and len(ignore[r]) > c + i :

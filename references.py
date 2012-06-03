@@ -185,6 +185,15 @@ def label_handler(stream, char_env, token_env, begin_stack) :
         return InhibitParagraphToken()
     return LambdaToken(_handler)
 
+def make_label(token_env, labelname, id, autoname) :
+    if token_env.has_key("_curr_page_reference") :
+        lr = PendingAnchorReference(id, autoname, token_env["_curr_page_reference"])
+    else :
+        raise Exception("No page reference given, so can't create anchor for id "+repr(id))
+    lr = lr.make_link_reference(labelname)
+    _references[lr.get_name()] = lr
+    _id_to_reference_name[lr.id] = lr.get_name()
+
 @add_token_handler(token_handlers, "ref")
 def ref_handler(stream, char_env, token_env, begin_stack) :
     poss_err = stream.failure()
