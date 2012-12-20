@@ -31,17 +31,19 @@ def html_handler(tokenname, html) :
 textit = html_handler("textit", "I")
 textbf = html_handler("textbf", "B")
 texttt = html_handler("texttt", "TT")
+textsc = html_handler("textsc", "SPAN STYLE=\"font-variant: small-caps;\" CLASS=\"small-caps\"")
 
 @add_token_handler(token_handlers, "emph")
 def emph_handler(stream, char_env, token_env, begin_stack) :
-    emphed = parse_one(stream, char_env, token_env, begin_stack)    
-    def _handler(env) :
-        in_emph = env.get("_in_emph", False)
-        env["_in_emph"] = not in_emph
-        return StringToken("<EM>") \
-            + emphed.eval(env) \
-            + StringToken("</EM>")
-    return LambdaToken(_handler)
+    try :
+        in_emph = token_env["_in_emph"]
+    except KeyError :
+        in_emph = False
+    emphed = parse_one(stream, char_env, token_env.extend({"_in_emph" : not in_emph}), begin_stack)
+    if in_emph :
+        return StringToken("<SPAN CLASS=\"de_em\">") + emphed + StringToken("</SPAN>")
+    else :
+        return StringToken("<EM>") + emphed + StringToken("</EM>")
 
 ###
 ### Breaks

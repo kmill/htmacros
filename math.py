@@ -432,6 +432,7 @@ make_token_type0(_other_symbols)
 
 _other_symbol_tokens = dict({"circ": "&deg;",
                              "infty": "&infin;",
+                             "qed": "&#x220e;",
                              })
 make_token_type0_symbol(_other_symbol_tokens)
 
@@ -514,6 +515,8 @@ make_type2_symbol(_math_bin_ops)
 _math_bin_token_ops = dict({'cdot' : '&sdot;',
                             'times' : '&times;',
                             'pm' : '&plusmn;',
+                            'cup': '&cup;',
+                            'cap': '&cap;',
                             })
 make_type2_token(_math_bin_token_ops)
 
@@ -539,6 +542,7 @@ def make_type3_token(symboldict) :
 _math_rel_ops = dict({'=': '=',
                       '<': '&lt;',
                       '>': '&gt;',
+                      ':': ':'
                       })
 make_type3_symbol(_math_rel_ops)
 
@@ -548,7 +552,13 @@ _math_rel_token_ops = dict({'leq': '&le;',
                             'equiv': '&equiv;',
                             'approx': '&asymp;',
                             'in': '&isin;',
+                            'subset': '&sub;',
+                            'supset': '&sup;',
                             'to': '&rarr;',
+                            'rightarrow' : '&rarr;',
+                            'leftarrow' : '&larr;',
+                            'botharrow' : '&harr;',
+                            'leftrightarrows' : '&#8646;'
                             })
 make_type3_token(_math_rel_token_ops)
 

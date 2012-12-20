@@ -44,3 +44,17 @@ def fileref_handler(stream, char_env, token_env, begin_stack) :
         return StringToken("<A HREF=\""+relout+"\">"+linktext+"</A>")
     
     return LambdaToken(_handler)
+
+# handles a reference to an absolute path in the output directory
+@add_token_handler(token_handlers, "relref")
+def relref_handler(stream, char_env, token_env, begin_stack) :
+    poss_err = stream.failure()
+    filename = parse_one(stream, char_env, token_env, begin_stack)
+
+    def _handler(env) :
+        fn = filename.eval(env).s
+        fn2 = os.path.abspath(os.path.join(token_env["_global_base_out_dir"], fn))
+        fnrel = os.path.relpath(fn2, token_env["_curr_out_dir"])
+        return StringToken(fnrel)
+
+    return LambdaToken(_handler)
