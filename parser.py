@@ -283,8 +283,8 @@ import images
 insert_module(images)
 import filerefs
 insert_module(filerefs)
-import math
-insert_module(math)
+import hmath
+insert_module(hmath)
 
 ###
 ### handling knowing where we're outputting and inputting
