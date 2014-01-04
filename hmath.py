@@ -602,6 +602,7 @@ _math_open_symbols = dict({'(': '(',
 make_type4_symbol(_math_open_symbols)
 
 _math_open_tokens = dict({'{': '{',
+                          'langle': '&#x27e8;'
                           })
 make_type4_token(_math_open_tokens)
 
@@ -642,6 +643,7 @@ _math_close_symbols = dict({')': ')',
 make_type5_symbol(_math_close_symbols)
 
 _math_close_tokens = dict({'}': '}',
+                          'rangle': '&#x27e9;'
                            })
 make_type5_token(_math_close_tokens)
 

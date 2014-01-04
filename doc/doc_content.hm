@@ -313,6 +313,8 @@ This is the second paragraph.
       token.
     \item[\texttt{breadcrumbs}] Text which contains the breadcrumb
       links.
+    \item[\texttt{relpagepath}] The path to this page, relative to the
+      base URL.
     \end{description}
 
     The page requires a title (defined by \verb|\title|) and text

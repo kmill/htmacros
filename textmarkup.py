@@ -204,6 +204,7 @@ def end_page_environment(char_env, token_env, outer_token_env, out) :
         if pagepath in _page_filenames :
             raise Exception("Two pages have the same filename "+repr(pagepath))
         _page_filenames.append(pagepath)
+        relpagepath = os.path.relpath(pagepath, token_env["_global_base_out_dir"])
         css = StringToken("")
         if token_env.has_key("_page_css") :
             css = StringToken("<LINK REL=\"stylesheet\" HREF=\""
@@ -237,6 +238,8 @@ def end_page_environment(char_env, token_env, outer_token_env, out) :
         # make page now
         pagetoken = token_env["_page_template"].eval({"pagetitle": token_env["_page_title"],
                                                       "pagecontent" : rout,
+                                                      "pagepath" : StringToken(pagepath),
+                                                      "relpagepath" : StringToken(relpagepath),
                                                       "css" : css,
                                                       "pagemodified" : token_env["_page_modified"],
                                                       "breadcrumbs" : breadcrumbs.eval({})})
